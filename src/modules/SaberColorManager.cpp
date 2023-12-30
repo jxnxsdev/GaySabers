@@ -11,21 +11,33 @@
 #include "GlobalNamespace/SetSaberGlowColor_PropertyTintColorPair.hpp"
 #include "UnityEngine/MeshRenderer.hpp"
 #include "UnityEngine/WaitForSeconds.hpp"
+#include "custom-types/shared/coroutine.hpp"
+#include "GlobalNamespace/CoroutineHelpers.hpp"
+#include "GlobalNamespace/SharedCoroutineStarter.hpp"
 using namespace GlobalNamespace;
 
 custom_types::Helpers::Coroutine rainbowFader(GlobalNamespace::SaberModelController* controller, GlobalNamespace::Saber* saber) {
     if (!getModConfig().Enabled.GetValue()) co_return;
-    auto colorGenerator = new GaySabers::ColorGenerator();
     bool isValid = true;
-
+    auto* colorGenerator = new GaySabers::ColorGenerator;
     getLogger().info("Starting Rainbow Fader");
 
     while(isValid) {
         if (!getModConfig().Enabled.GetValue()) isValid = false;
+        if(saber == nullptr || controller == nullptr) {
+            break;
+        }
+
+        getLogger().info("1");
+
         auto nextColor = colorGenerator->getNextColor();
+
+        getLogger().info("2");
 
         auto setSaberGlowColor = controller->setSaberGlowColors;
         auto setSaberFakeGlowColor = controller->setSaberFakeGlowColors;
+
+        getLogger().info("3");
 
         for (int i = 0; i < setSaberGlowColor->Length(); i++) {
             auto glowColor = controller->setSaberGlowColors[i];
@@ -44,14 +56,19 @@ custom_types::Helpers::Coroutine rainbowFader(GlobalNamespace::SaberModelControl
             fakeGlowColor->parametric3SliceSprite->Refresh();
         }
 
+        getLogger().info("4");
+
         co_yield reinterpret_cast<System::Collections::IEnumerator*>(UnityEngine::WaitForSeconds::New_ctor(getModConfig().Delay.GetValue() / 100.0f));
     }
 
+    delete colorGenerator;
     co_return;
 }
 
 namespace GaySabers::SaberColorManager {
     void StartColorCoroutine(GlobalNamespace::SaberModelController* controller, GlobalNamespace::Saber* saber) {
-        controller->StartCoroutine(custom_types::Helpers::CoroutineHelper::New(rainbowFader(controller, saber)));
+        GlobalNamespace::SharedCoroutineStarter::get_instance()->StartCoroutine(
+            custom_types::Helpers::CoroutineHelper::New(rainbowFader(controller, saber)
+                ));
     }
 }
