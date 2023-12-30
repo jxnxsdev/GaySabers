@@ -11,7 +11,6 @@
 #include "GlobalNamespace/SetSaberGlowColor_PropertyTintColorPair.hpp"
 #include "UnityEngine/MeshRenderer.hpp"
 #include "UnityEngine/WaitForSeconds.hpp"
-
 using namespace GlobalNamespace;
 
 custom_types::Helpers::Coroutine rainbowFader(GlobalNamespace::SaberModelController* controller, GlobalNamespace::Saber* saber) {
@@ -45,7 +44,7 @@ custom_types::Helpers::Coroutine rainbowFader(GlobalNamespace::SaberModelControl
             fakeGlowColor->parametric3SliceSprite->Refresh();
         }
 
-        co_yield reinterpret_cast<System::Collections::IEnumerator*>(UnityEngine::WaitForSeconds::New_ctor(getModConfig().Delay.GetValue()));
+        co_yield reinterpret_cast<System::Collections::IEnumerator*>(UnityEngine::WaitForSeconds::New_ctor(getModConfig().Delay.GetValue() / 100.0f));
     }
 
     co_return;

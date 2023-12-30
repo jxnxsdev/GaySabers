@@ -9,6 +9,18 @@
 #include "ModConfig.hpp"
 #include "modules/SaberColorManager.hpp"
 
+#include "modules/FootStepColorManager.hpp"
+#include "modules/MenuColorManager.hpp"
+
+// Gay Menu
+#include "GlobalNamespace/BloomPrePassBackgroundColor.hpp"
+#include "GlobalNamespace/CampaignFlowCoordinator.hpp"
+#include "GlobalNamespace/MultiplayerModeSelectionFlowCoordinator.hpp"
+#include "GlobalNamespace/PartyFreePlayFlowCoordinator.hpp"
+#include "GlobalNamespace/SoloFreePlayFlowCoordinator.hpp"
+
+#include <map>
+
 static ModInfo modInfo;
 
 using namespace GlobalNamespace;
@@ -28,6 +40,21 @@ MAKE_HOOK_MATCH(SaberModelController_init, &GlobalNamespace::SaberModelControlle
     getLogger().info("SaberModelController_init");
     GaySabers::SaberColorManager::StartColorCoroutine(self, saber);
 }
+
+/*MAKE_HOOK_MATCH(MainMenu, &GlobalNamespace::MainFlowCoordinator::DidActivate,
+                void, GlobalNamespace::MainFlowCoordinator *self, bool a,
+                bool b, bool c) {
+
+    MainMenu(self, a, b, c);
+
+
+
+    // new thread
+    std::thread([self]() {
+        GaySabers::FootStepColorManager::StartColorCoroutine(self);
+    }).detach();
+
+}*/
 
 extern "C" void setup(ModInfo& info) {
     info.id = MOD_ID;
@@ -50,5 +77,6 @@ extern "C" void load() {
 
     // Install the hook for SaberManager::Start
     INSTALL_HOOK(getLogger(), SaberModelController_init);
+    //INSTALL_HOOK(getLogger(), MainMenu);
     getLogger().info("Installed all hooks!");
 }

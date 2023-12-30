@@ -50,6 +50,10 @@ add_library(
         src/modules/SaberColorManager.cpp
         src/modules/ColorGenerator.cpp
         include/modules/ColorGenerator.hpp
+        src/modules/FootStepColorManager.cpp
+        include/modules/FootStepColorManager.hpp
+        src/modules/MenuColorManager.cpp
+        include/modules/MenuColorManager.hpp
 )
 
 target_include_directories(${COMPILE_ID} PRIVATE .)
