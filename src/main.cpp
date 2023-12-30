@@ -94,6 +94,7 @@ custom_types::Helpers::Coroutine rainbowFader(GlobalNamespace::SaberModelControl
                 GlobalNamespace::SetSaberGlowColor::PropertyTintColorPair* tinPair = tinPairs[j];
                 color->materialPropertyBlock->SetColor(tinPair->property, nextColor);
             }
+            color->meshRenderer->SetPropertyBlock(color->materialPropertyBlock);
         }
         co_yield reinterpret_cast<System::Collections::IEnumerator*>(UnityEngine::WaitForSeconds::New_ctor(delay));
     }
