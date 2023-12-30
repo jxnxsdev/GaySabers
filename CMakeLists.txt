@@ -46,6 +46,10 @@ add_library(
         include/ModSettingsViewController.hpp
         src/ModSettingsViewController.cpp
         src/ModConfig.cpp
+        include/modules/SaberColorManager.hpp
+        src/modules/SaberColorManager.cpp
+        src/modules/ColorGenerator.cpp
+        include/modules/ColorGenerator.hpp
 )
 
 target_include_directories(${COMPILE_ID} PRIVATE .)
