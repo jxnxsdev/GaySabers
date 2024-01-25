@@ -4,6 +4,9 @@
 #include "GlobalNamespace/SaberManager.hpp"
 #include "GlobalNamespace/SaberModelController.hpp"
 #include "modules/SaberColorManager.hpp"
+#include "ModSettingsViewController.hpp"
+#include "bsml/shared/BSML-Lite.hpp"
+#include "bsml/shared/BSML.hpp"
 
 #include <map>
 
@@ -38,6 +41,10 @@ extern "C" void setup(CModInfo& info) {
 
 extern "C" void load() {
     il2cpp_functions::Init();
+    BSML::Init();
+    BSML::Register::RegisterSettingsMenu("GaySabers", DidActivate, false);
+
+    getLogger().info("Registered Mod Settings!");
 
     getLogger().info("Installing hooks...");
     INSTALL_HOOK(getLogger(), SaberModelController_init);
