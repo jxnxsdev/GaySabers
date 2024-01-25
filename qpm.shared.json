@@ -62,7 +62,7 @@
       },
       {
         "id": "custom-types",
-        "versionRange": "^0.16.6",
+        "versionRange": "^0.16.9",
         "additionalData": {}
       }
     ]
@@ -71,10 +71,10 @@
     {
       "dependency": {
         "id": "bs-cordl",
-        "versionRange": "=3402.1.1",
+        "versionRange": "=3402.1.2",
         "additionalData": {
           "headersOnly": true,
-          "branchName": "version/v3402_1_1",
+          "branchName": "version/v3402_1_2",
           "compileOptions": {
             "includePaths": [
               "include"
@@ -89,7 +89,7 @@
           }
         }
       },
-      "version": "3402.1.1"
+      "version": "3402.1.2"
     },
     {
       "dependency": {
@@ -116,13 +116,13 @@
     {
       "dependency": {
         "id": "custom-types",
-        "versionRange": "=0.16.6",
+        "versionRange": "=0.16.9",
         "additionalData": {
-          "soLink": "https://github.com/QuestPackageManager/Il2CppQuestTypePatching/releases/download/v0.16.6/libcustom-types.so",
-          "debugSoLink": "https://github.com/QuestPackageManager/Il2CppQuestTypePatching/releases/download/v0.16.6/debug_libcustom-types.so",
+          "soLink": "https://github.com/QuestPackageManager/Il2CppQuestTypePatching/releases/download/v0.16.9/libcustom-types.so",
+          "debugSoLink": "https://github.com/QuestPackageManager/Il2CppQuestTypePatching/releases/download/v0.16.9/debug_libcustom-types.so",
           "overrideSoName": "libcustom-types.so",
-          "modLink": "https://github.com/QuestPackageManager/Il2CppQuestTypePatching/releases/download/v0.16.6/CustomTypes.qmod",
-          "branchName": "version/v0_16_6",
+          "modLink": "https://github.com/QuestPackageManager/Il2CppQuestTypePatching/releases/download/v0.16.9/CustomTypes.qmod",
+          "branchName": "version/v0_16_9",
           "compileOptions": {
             "cppFlags": [
               "-Wno-invalid-offsetof"
@@ -131,7 +131,7 @@
           "cmake": true
         }
       },
-      "version": "0.16.6"
+      "version": "0.16.9"
     },
     {
       "dependency": {
