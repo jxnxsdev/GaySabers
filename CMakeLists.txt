@@ -42,18 +42,12 @@ add_library(
         SHARED
         ${cpp_file_list}
         ${c_file_list}
-        include/ModConfig.hpp
-        include/ModSettingsViewController.hpp
-        src/ModSettingsViewController.cpp
-        src/ModConfig.cpp
         include/modules/SaberColorManager.hpp
         src/modules/SaberColorManager.cpp
         src/modules/ColorGenerator.cpp
         include/modules/ColorGenerator.hpp
-        src/modules/FootStepColorManager.cpp
-        include/modules/FootStepColorManager.hpp
-        src/modules/MenuColorManager.cpp
-        include/modules/MenuColorManager.hpp
+        src/ModSettingsViewController.cpp
+        include/ModSettingsViewController.hpp
 )
 
 target_include_directories(${COMPILE_ID} PRIVATE .)

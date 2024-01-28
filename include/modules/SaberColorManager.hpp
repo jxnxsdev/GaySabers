@@ -1,6 +1,5 @@
 #pragma once
 
-#include "ModConfig.hpp"
 #include "modules/ColorGenerator.hpp"
 
 #include "GlobalNamespace/Saber.hpp"

@@ -2,26 +2,16 @@
 #include "beatsaber-hook/shared/utils/hooking.hpp"
 #include "beatsaber-hook/shared/utils/il2cpp-utils.hpp"
 #include "GlobalNamespace/SaberManager.hpp"
-#include "GlobalNamespace/Saber.hpp"
 #include "GlobalNamespace/SaberModelController.hpp"
-#include "questui/shared/QuestUI.hpp"
-#include "ModSettingsViewController.hpp"
-#include "ModConfig.hpp"
+#include "GlobalNamespace/MainMenuViewController.hpp"
 #include "modules/SaberColorManager.hpp"
-
-#include "modules/FootStepColorManager.hpp"
-#include "modules/MenuColorManager.hpp"
-
-// Gay Menu
-#include "GlobalNamespace/BloomPrePassBackgroundColor.hpp"
-#include "GlobalNamespace/CampaignFlowCoordinator.hpp"
-#include "GlobalNamespace/MultiplayerModeSelectionFlowCoordinator.hpp"
-#include "GlobalNamespace/PartyFreePlayFlowCoordinator.hpp"
-#include "GlobalNamespace/SoloFreePlayFlowCoordinator.hpp"
+#include "ModSettingsViewController.hpp"
+#include "bsml/shared/BSML-Lite.hpp"
+#include "bsml/shared/BSML.hpp"
 
 #include <map>
 
-static ModInfo modInfo;
+static modloader::ModInfo modInfo{MOD_ID, VERSION, 0};
 
 using namespace GlobalNamespace;
 
@@ -35,48 +25,48 @@ Logger& getLogger() {
     return *logger;
 }
 
+bool hasLoaded = false;
+
+MAKE_HOOK_MATCH(MainMenuViewControllerDidActivate, &GlobalNamespace::MainMenuViewController::DidActivate, void, GlobalNamespace::MainMenuViewController *self, bool firstActivation, bool addedToHierarchy, bool screenSystemEnabling) {
+    MainMenuViewControllerDidActivate(self, firstActivation, addedToHierarchy, screenSystemEnabling);
+
+    if(firstActivation) {
+        hasLoaded = true;
+    }
+}
+
 MAKE_HOOK_MATCH(SaberModelController_init, &GlobalNamespace::SaberModelController::Init, void,  GlobalNamespace::SaberModelController* self, UnityEngine::Transform* parent, GlobalNamespace::Saber* saber) {
     SaberModelController_init(self, parent, saber);
+
+    if(!hasLoaded) return;
+
     getLogger().info("SaberModelController_init");
     GaySabers::SaberColorManager::StartColorCoroutine(self, saber);
 }
 
-/*MAKE_HOOK_MATCH(MainMenu, &GlobalNamespace::MainFlowCoordinator::DidActivate,
-                void, GlobalNamespace::MainFlowCoordinator *self, bool a,
-                bool b, bool c) {
-
-    MainMenu(self, a, b, c);
-
-
-
-    // new thread
-    std::thread([self]() {
-        GaySabers::FootStepColorManager::StartColorCoroutine(self);
-    }).detach();
-
-}*/
-
-extern "C" void setup(ModInfo& info) {
-    info.id = MOD_ID;
-    info.version = VERSION;
-    modInfo = info;
+extern "C" void setup(CModInfo& info) {
+    info.id = modInfo.id.c_str();
+    info.version = modInfo.version.c_str();
+    info.version_long = modInfo.versionLong;
 
     getConfig().Load();
-
-    getModConfig().Init(modInfo);
     getLogger().info("Completed setup!");
 }
 
 extern "C" void load() {
     il2cpp_functions::Init();
-    QuestUI::Init();
+    BSML::Init();
+    BSML::Register::RegisterSettingsMenu("GaySabers", DidActivate, false);
 
-    QuestUI::Register::RegisterMainMenuModSettingsViewController(modInfo, DidActivate);
+    if(!getConfig().config.HasMember("Enabled")) {
+        getConfig().config.AddMember("Enabled", true, getConfig().config.GetAllocator());
+        getConfig().Write();
+    }
+
+    getLogger().info("Registered Mod Settings!");
 
     getLogger().info("Installing hooks...");
-
-    // Install the hook for SaberManager::Start
     INSTALL_HOOK(getLogger(), SaberModelController_init);
-    //INSTALL_HOOK(getLogger(), MainMenu);
+    INSTALL_HOOK(getLogger(), MainMenuViewControllerDidActivate);
     getLogger().info("Installed all hooks!");
 }
