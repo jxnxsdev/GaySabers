@@ -1,4 +1,5 @@
 #include "ModSettingsViewController.hpp"
+#include "main.hpp"
 
 #include "HMUI/Touchable.hpp"
 #include "bsml/shared/BSML-Lite.hpp"
@@ -17,8 +18,9 @@ void DidActivate(ViewController* self, bool firstActivation, bool addedToHierarc
         auto layout = BSML::Lite::CreateVerticalLayoutGroup(parent);
         layout->set_spacing(0.4f);
 
-        BSML::Lite::CreateText(parent, "Mod Settings", true)->set_alignment(TMPro::TextAlignmentOptions::TopJustified);
-        /*AddConfigValueToggle(parent, getModConfig().Enabled);
-        AddConfigValueIncrementFloat(parent, getModConfig().Delay, 2, 0.01f, 0.01f, 1.0f);*/
+        auto* toggle = BSML::Lite::CreateToggle(parent, "Enabled", getConfig().config["Enabled"].GetBool(), [](bool value) {
+            getConfig().config["Enabled"].SetBool(value);
+            getConfig().Write();
+        });
     }
 }

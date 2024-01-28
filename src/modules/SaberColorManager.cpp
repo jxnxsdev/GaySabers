@@ -1,7 +1,6 @@
 #include "modules/SaberColorManager.hpp"
 #include "modules/ColorGenerator.hpp"
 #include "main.hpp"
-#include "sombrero/shared/FastColor.hpp"
 #include "GlobalNamespace/SetSaberGlowColor.hpp"
 #include "GlobalNamespace/SetSaberFakeGlowColor.hpp"
 #include "GlobalNamespace/ColorManager.hpp"
@@ -12,17 +11,37 @@
 #include "UnityEngine/WaitForSeconds.hpp"
 #include "custom-types/shared/coroutine.hpp"
 #include "GlobalNamespace/CoroutineHelpers.hpp"
+#include "bsml/shared/BSML/SharedCoroutineStarter.hpp"
 using namespace GlobalNamespace;
 
 custom_types::Helpers::Coroutine rainbowFader(GlobalNamespace::SaberModelController* controller, GlobalNamespace::Saber* saber) {
+    if(!getConfig().config["Enabled"].GetBool()) {
+        co_return;
+    }
+
     bool isValid = true;
     auto* colorGenerator = new GaySabers::ColorGenerator;
     getLogger().info("Starting Rainbow Fader");
 
     while(isValid) {
-        if(saber == nullptr || controller == nullptr) {
-            break;
+        if(!getConfig().config["Enabled"].GetBool()) {
+            isValid = false;
         }
+
+        if(saber == nullptr || controller == nullptr) {
+            delete colorGenerator;
+            co_return;
+        }
+
+
+        UnityW<Saber> unitySaber = saber;
+        UnityW<SaberModelController> unityController = controller;
+
+        if(!unitySaber.isAlive() || !unityController.isAlive()) {
+            delete colorGenerator;
+            co_return;
+        }
+
         auto nextColor = colorGenerator->getNextColor();
 
         auto setSaberGlowColor = controller->____setSaberGlowColors;
@@ -30,19 +49,19 @@ custom_types::Helpers::Coroutine rainbowFader(GlobalNamespace::SaberModelControl
 
         for (int i = 0; i < setSaberGlowColor->get_Length(); i++) {
             auto glowColor = controller->____setSaberGlowColors[i];
-            auto tintPais = glowColor->ptr()->_propertyTintColorPairs;
+            auto tintPais = glowColor->_propertyTintColorPairs;
 
             for (int j = 0; j < tintPais->get_Length(); j++) {
                 auto tintPair = tintPais->values[j];
-                glowColor->ptr()->_materialPropertyBlock->SetColor(tintPair->property, nextColor);
+                glowColor->_materialPropertyBlock->SetColor(tintPair->property, nextColor);
             }
-            glowColor->ptr()->_meshRenderer->SetPropertyBlock(glowColor->ptr()->_materialPropertyBlock);
+            glowColor->_meshRenderer->SetPropertyBlock(glowColor->_materialPropertyBlock);
         }
 
         for (int i = 0; i < setSaberFakeGlowColor->get_Length(); i++) {
             auto fakeGlowColor = controller->____setSaberFakeGlowColors[i];
-            fakeGlowColor->ptr()->_parametric3SliceSprite->color = nextColor;
-            fakeGlowColor->ptr()->_parametric3SliceSprite->Refresh();
+            fakeGlowColor->_parametric3SliceSprite->color = nextColor;
+            fakeGlowColor->_parametric3SliceSprite->Refresh();
         }
 
         co_yield reinterpret_cast<System::Collections::IEnumerator*>(UnityEngine::WaitForSeconds::New_ctor(0.01f));
@@ -54,6 +73,7 @@ custom_types::Helpers::Coroutine rainbowFader(GlobalNamespace::SaberModelControl
 
 namespace GaySabers::SaberColorManager {
     void StartColorCoroutine(GlobalNamespace::SaberModelController* controller, GlobalNamespace::Saber* saber) {
-        controller->StartCoroutine(custom_types::Helpers::CoroutineHelper::New(rainbowFader(controller, saber)));
+        getLogger().info("Starting shared coroutine");
+        BSML::SharedCoroutineStarter::StartCoroutine(rainbowFader(controller, saber));
     }
 }

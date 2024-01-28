@@ -4,7 +4,7 @@
   "name": "${mod_name}",
   "id": "${mod_id}",
   "author": "hdgamer1404Jonas",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "packageId": "com.beatgames.beatsaber",
   "packageVersion": "1.34.2_7115288407",
   "description": "Makes your sabers gay (i mean glow in rainbow colors)",
@@ -12,7 +12,8 @@
   "modFiles": [
     "libgaysabers.so"
   ],
-  "lateModFiles": [],
+  "lateModFiles": [
+  ],
   "libraryFiles": [],
   "fileCopies": [],
   "coverImage": "logo.gif"
