@@ -12,4 +12,5 @@
 
 // Define these functions here so that we can easily read configuration and log information from other files
 Configuration& getConfig();
-Logger& getLogger();
+
+constexpr auto logger = Paper::ConstLoggerContext(MOD_ID);
