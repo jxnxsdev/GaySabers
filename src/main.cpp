@@ -6,8 +6,8 @@
 #include "GlobalNamespace/MainMenuViewController.hpp"
 #include "modules/SaberColorManager.hpp"
 #include "ModSettingsViewController.hpp"
-#include "bsml/shared/BSML-Lite.hpp"
 #include "bsml/shared/BSML.hpp"
+
 
 #include <map>
 
@@ -18,11 +18,6 @@ using namespace GlobalNamespace;
 Configuration& getConfig() {
     static Configuration config(modInfo);
     return config;
-}
-
-Logger& getLogger() {
-    static Logger* logger = new Logger(modInfo);
-    return *logger;
 }
 
 bool hasLoaded = false;
@@ -40,7 +35,7 @@ MAKE_HOOK_MATCH(SaberModelController_init, &GlobalNamespace::SaberModelControlle
 
     if(!hasLoaded) return;
 
-    getLogger().info("SaberModelController_init");
+    logger.info("SaberModelController_init");
     GaySabers::SaberColorManager::StartColorCoroutine(self, saber);
 }
 
@@ -49,8 +44,10 @@ extern "C" void setup(CModInfo& info) {
     info.version = modInfo.version.c_str();
     info.version_long = modInfo.versionLong;
 
+    Paper::Logger::RegisterFileContextId(MOD_ID);
+
     getConfig().Load();
-    getLogger().info("Completed setup!");
+    logger.info("Completed setup!");
 }
 
 extern "C" void load() {
@@ -63,10 +60,11 @@ extern "C" void load() {
         getConfig().Write();
     }
 
-    getLogger().info("Registered Mod Settings!");
+    logger.info("Registered Mod Settings!");
 
-    getLogger().info("Installing hooks...");
-    INSTALL_HOOK(getLogger(), SaberModelController_init);
-    INSTALL_HOOK(getLogger(), MainMenuViewControllerDidActivate);
-    getLogger().info("Installed all hooks!");
+
+    logger.info("Installing hooks...");
+    INSTALL_HOOK(logger, SaberModelController_init);
+    INSTALL_HOOK(logger, MainMenuViewControllerDidActivate);
+    logger.info("Installed all hooks!");
 }
