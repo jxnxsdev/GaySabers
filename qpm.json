@@ -60,7 +60,10 @@
     {
       "id": "scotland2",
       "versionRange": "^0.1.4",
-      "additionalData": {}
+      "additionalData": {
+        "includeQmod": false,
+        "private": true
+      }
     },
     {
       "id": "bsml",

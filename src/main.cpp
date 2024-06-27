@@ -39,7 +39,7 @@ MAKE_HOOK_MATCH(SaberModelController_init, &GlobalNamespace::SaberModelControlle
     GaySabers::SaberColorManager::StartColorCoroutine(self, saber);
 }
 
-extern "C" void setup(CModInfo& info) {
+extern "C" __attribute__((visibility("default"))) void setup(CModInfo& info) {
     info.id = modInfo.id.c_str();
     info.version = modInfo.version.c_str();
     info.version_long = modInfo.versionLong;
@@ -50,7 +50,7 @@ extern "C" void setup(CModInfo& info) {
     logger.info("Completed setup!");
 }
 
-extern "C" void load() {
+extern "C" __attribute__((visibility("default"))) void load() {
     il2cpp_functions::Init();
     BSML::Init();
     BSML::Register::RegisterSettingsMenu("GaySabers", DidActivate, false);
